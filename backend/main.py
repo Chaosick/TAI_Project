@@ -1,22 +1,31 @@
-from fastapi import FastAPI
+from configparser import InterpolationMissingOptionError
+from http.client import NOT_FOUND
+from urllib import response
+from fastapi import FastAPI, Depends, Response, status, HTTPException
 from . import models, schemas
-from .database import engine
+from .database import engine, SessionLocal
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 models.Base.metadata.create_all(engine)
 
-@app.get('/')
-async def index():
-    return{'data':'Herro my names Rajesh'}
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@app.get('/items')
-async def allItems():
-    return{'data':{'Such items'}}
+@app.get('/items', status_code=200)
+async def allItems(response: Response, db: Session = Depends(get_db)):
+    items = db.query(models.Product).all()
+    if not items:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    return items
 
-@app.get('/items/{cat_id}')
-async def catalog(cat_id:int):
-    return{'data':{cat_id}}
-
-@app.get("/items/{cat_id}/{id}")
-async def getItem(cat_id:int , id):
-    return{'data':{cat_id:{id}}}
+@app.get('/items/{cat_id}', status_code=200)
+async def catalog(cat_id, response: Response, db: Session = Depends(get_db)):
+    cat_items = db.query(models.Product).filter(models.Product.category_id == cat_id).all()
+    if not cat_items:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"Brak produktów w danej kategorii")
+    return cat_items
