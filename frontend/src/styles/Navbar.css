@@ -1,0 +1,23 @@
+.lewo{
+    background-color:violet;
+    display: flex;
+    align-items: flex-end;
+}
+
+.navbar-category{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    font-size: medium;
+}
+
+.test-xd{
+    display:flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items:baseline;
+}
+
+.input-fix{
+    display: flex;
+}
