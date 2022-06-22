@@ -9,9 +9,8 @@ class Product(Base):
     name = Column(String(200), nullable = False)
     atributes = Column(String(5000), nullable = False)
     price = Column(Numeric(5,2), nullable = False)
+    preview = Column(String(60000))
     category_id = Column(Integer, ForeignKey("category.c_id"))
-    #preview = Column(String(60000)) do zrobienia na podgląd produktu, chyba że będę używał photo jako endpointa
-
 
 class Category(Base):
     __tablename__ = "category"
