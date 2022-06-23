@@ -15,6 +15,11 @@ const Mainbar = (props) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const [userName, setUserName]=useState("")
+    const [userLastName, setUserLastName]=useState("")
+    const [userNumber, setUserNumber]=useState(123456789)
+    const [userEmail, setUserEmail]=useState("")
+
     useEffect(() => {
         axios
             .get(`http://localhost:8000/items/${props.category}?_name=${props.search}&min=${props.minPrice}&max=${props.maxPrice}`)
@@ -65,6 +70,30 @@ const Mainbar = (props) => {
             });
 
     }, [itemDetail])
+
+    const handlePayClick = () => {  
+          axios
+          .post('http://localhost:8000/payment', {
+            firstname: userName,
+            lastname: userLastName,
+            email: userEmail,
+            phone: userNumber,
+            cost: (itemDetail.price*100)
+          }
+          )
+          .then(function (response) {
+            console.log(response);
+            window.open(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    
+          setUserName("");
+          setUserLastName("");
+          setUserEmail("");
+          setUserNumber("");
+        }
 
     return (
         <div className='bg-dark'>
@@ -129,6 +158,8 @@ const Mainbar = (props) => {
                                                     type="text"
                                                     placeholder="Imię"
                                                     autoFocus
+                                                    value={userName} 
+                                                    onInput={e => setUserName(e.target.value)}
                                                 />
                                             </Form.Group>
                                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput2">
@@ -137,6 +168,8 @@ const Mainbar = (props) => {
                                                     type="text"
                                                     placeholder="Nazwisko"
                                                     autoFocus
+                                                    value={userLastName} 
+                                                    onInput={e => setUserLastName(e.target.value)}
                                                 />
                                             </Form.Group>
                                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
@@ -145,6 +178,8 @@ const Mainbar = (props) => {
                                                     type="email"
                                                     placeholder="imie.nazwisko@przyklad.pl"
                                                     autoFocus
+                                                    value={userEmail} 
+                                                    onInput={e => setUserEmail(e.target.value)}
                                                 />
                                             </Form.Group>
                                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
@@ -153,6 +188,8 @@ const Mainbar = (props) => {
                                                     type="text"
                                                     placeholder="123456789"
                                                     autoFocus
+                                                    value={userNumber} 
+                                                    onInput={e => setUserNumber(e.target.value)}
                                                 />
                                             </Form.Group>
                                         </Form>
@@ -162,7 +199,7 @@ const Mainbar = (props) => {
                                         <Button variant="secondary" onClick={handleClose}>
                                             Anuluj zakup
                                         </Button>
-                                        <Button variant="primary" onClick={handleClose}>
+                                        <Button variant="primary" onClick={() => {handlePayClick()}}>
                                             Przejdź do zapłaty
                                         </Button>
                                     </Modal.Footer>

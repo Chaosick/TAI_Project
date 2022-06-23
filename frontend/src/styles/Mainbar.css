@@ -39,7 +39,9 @@
 
 .opis {
   margin-top: 50px;
+  margin-left: 10px;
   color: lightgray;
+  white-space: pre-line;
 }
 
 .odstep{
